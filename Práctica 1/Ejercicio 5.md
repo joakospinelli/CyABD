@@ -66,7 +66,23 @@ def fred(key, values, context):
 
 #
 ## f)
-(NO SÉ COMO COMPARAR CON OTROS EN EL REDUCE)
+```python
+def fmap(key, value, context):
+    words = value.split("\n")
+    for w in words:
+      if (w.startswith("--")):
+        # En el valor guardo una tupla (dialogo-caracteres)
+        context.write(1, (w, len(w)))
+        
+def fred(key, values, context):
+    max = -1
+    maxDialogo = ''
+    for v in values:
+        if (v[1] > max):
+          max = v[1]
+          maxDialogo = v[0]
+    context.write("DIALOGO MÁS LARGO", (maxDialogo, max))
+```
 
 #
 ## g)
