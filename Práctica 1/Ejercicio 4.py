@@ -1,4 +1,4 @@
-# Acá iría todo el emulador
+#  4) Modifique el proyecto WordCount para contar cuántas vocales, consonantes, dígitos, espacios y otros caracteres posee el data set Libros.
 
 def fmap(key, value, context):
     digitos = '0123456789'
@@ -22,9 +22,6 @@ def fred(key, values, context):
     for v in values:
       c=c+1
     context.write(key, c)
-
-inputDir = "/content/input/"
-outputDir = "/content/output/"
 
 job = Job(inputDir, outputDir, fmap, fred)
 success = job.waitForCompletion()
