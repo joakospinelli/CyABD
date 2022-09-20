@@ -17,7 +17,7 @@ def fred(key, values, context):
     for v in values:
       cont = cont + v
       total = total + 1
-    context.write(key, cont / total)
+    context.write(key, int(cont / total))
 
 job = Job(inputDir, outputDir, fmap, fred)
 success = job.waitForCompletion()
