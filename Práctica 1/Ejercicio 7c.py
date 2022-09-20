@@ -8,10 +8,8 @@ def age(birthdate):
     return age
 
 def fmap(key, value, context):
-  value = value.split('\n')
-  for v in value:
-    nombre, dia, mes, año, importe = v.split()
-    context.write(1, age(date(int(año), int(mes), int(dia))))
+  nombre, dia, mes, año, importe = value.split()
+  context.write(1, age(date(int(año), int(mes), int(dia))))
         
 def fred(key, values, context):
     total = 0

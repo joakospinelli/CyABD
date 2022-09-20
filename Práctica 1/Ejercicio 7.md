@@ -1,4 +1,4 @@
-# 7) El dataset Inversionistas posee los nombres, dni, fecha de nacimiento (día, mes y año como campos separados) e importe invertido por diferentes personas en la apertura de un nuevo negocio en la ciudad. ¿Se puede resolver los tres problemas en un único job?
+# 7) El dataset Inversionistas posee los nombres, dni, fecha de nacimiento (día, mes y año como campos separados) e importe invertido por diferentes personas en la apertura de un nuevo negocio en la ciudad (LOS 3 PROBLEMAS A RESOLVER SON 7.A, 7.B Y 7.C). ¿Se puede resolver los tres problemas en un único job?
 
 Si bien podrían juntarse toda la información en una única función `map` (y almacenarla en claves distintas), para cada uno de los problemas se necesita que la función `reduce` trabaje de manera distinta.
 

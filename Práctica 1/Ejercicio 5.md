@@ -1,7 +1,7 @@
 # 5. Indique si utilizando el dataset Libros es posible resolver los siguientes problemas:
 
 ## a) Obtener todos los títulos de todos los libros
-(Se supone que se puede hacer una trampa con la key asociada a cada renglón pero no sé bien como hacerlo xd)
+(Se supone que se puede hacer porque el primer renglón de cada archivo tiene clave 0, entonces se podría saber el título así. Pero el Google Colab tiene un error que no hace eso así que no funciona)
 
 #
 ## b) Obtener la cantidad de palabras promedio por párrafo

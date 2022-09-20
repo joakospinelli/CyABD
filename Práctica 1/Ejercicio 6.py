@@ -6,13 +6,10 @@ import difflib
 
 # Tengo que estandarizar la información en el map
 def fmap(key, value, context):
-  value = value.split('\n')
   options = ["MUY SATISFECHO","ALGO SATISFECHO","POCO SATISFECHO","DISCONFORME","MUY DISCONFORME"]
-  for v in value:
-    v = v.upper()
-    similar = difflib.get_close_matches(v, options) # Los retorna en orden de similitud (de menor a mayor)
-    print (similar, v)
-    context.write(similar[0], 1)
+  v = value.upper()
+  similar = difflib.get_close_matches(v, options) # Los retorna en orden de similitud (de menor a mayor)
+  context.write(similar[0], 1)
         
 def fred(key, values, context):
     total = 0

@@ -3,11 +3,9 @@
 from datetime import date
 
 def fmap(key, value, context):
-  value = value.split('\n')
-  for v in value:
-    nombre, dia, mes, año, importe = v.split()
-    # Almaceno como valor una tupla (fecha nac,nombre)
-    context.write(1, (date(int(año), int(mes), int(dia)), nombre))
+  nombre, dia, mes, año, importe = value.split()
+  # Almaceno como valor una tupla (fecha nac,nombre)
+  context.write(1, (date(int(año), int(mes), int(dia)), nombre))
         
 def fred(key, values, context):
     max = date(1, 1, 1)
@@ -20,4 +18,3 @@ def fred(key, values, context):
 
 job = Job(inputDir, outputDir, fmap, fred)
 success = job.waitForCompletion()
-
