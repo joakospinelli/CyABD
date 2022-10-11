@@ -2,7 +2,6 @@ from pyspark import SparkContext
 sc = SparkContext("local","Spark")
 
 root_path = 'file:///content/drive/My Drive/Colab Notebooks/'
-
 # 3) Usando el dataset Banco, escriba un script en Python usando Spark para responder a las siguientes preguntas:
 
 # a. Nombre y apellidos de los clientes capricornianos.
