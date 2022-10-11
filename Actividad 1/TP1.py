@@ -159,7 +159,7 @@ success = job.waitForCompletion()
 
 # iii
 
-def fmap(key, value, context, num):
+def fmap(key, value, context):
   context.write(value, "0")
 
 def fmap2(key, value, context):
@@ -197,7 +197,7 @@ job.addInputPath(inputDir5, fmap5)
 
 success = job.waitForCompletion()
 
-f = os.stat(tempDir + "output.txt")
+f = os.stat(outputDir + "output.txt")
 
 if (f.st_size > 0):
   print("NO son iguales")
