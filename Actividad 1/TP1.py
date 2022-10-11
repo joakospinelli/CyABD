@@ -60,7 +60,7 @@ success = job.waitForCompletion()
 # Implemente un job MapReduce que permita determinar si dos datasets (meses) son 
 # iguales. Dos conjuntos son iguales si ambos tienen los mismos elementos sin importar
 # cuántas veces se repitan dentro de cada conjunto.
-
+import os
 
 def fmap(key, value, context):
   context.write(value, "1")
@@ -87,8 +87,6 @@ job = Job(inputDir1,tempDir,fmap,fred)
 job.addInputPath(inputDir2, fmap2)
 
 success = job.waitForCompletion()
-
-sonIguales = True
 
 f = os.stat(tempDir + "output.txt")
 
