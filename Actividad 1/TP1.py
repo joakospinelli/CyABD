@@ -120,7 +120,7 @@ success = job.waitForCompletion()
 
 #ii
 
-def fmap(key, value, context, num):
+def fmap(key, value, context):
   context.write(value, "0")
 
 def fmap2(key, value, context):
@@ -156,3 +156,50 @@ job.addInputPath(inputDir3, fmap3)
 job.addInputPath(inputDir4, fmap4)
 job.addInputPath(inputDir5, fmap5)
 success = job.waitForCompletion()
+
+# iii
+
+def fmap(key, value, context, num):
+  context.write(value, "0")
+
+def fmap2(key, value, context):
+  context.write(value, "1")
+
+def fmap3(key, value, context):
+  context.write(value, "2")
+
+def fmap4(key, value, context):
+  context.write(value, "3")
+
+def fmap5(key, value, context):
+  context.write(value, "4")
+
+def fred(key, values, context):
+  esta = []
+
+  for i in range(context["n"]): # Inicializo lista en False
+    esta.append(False)
+
+  for v in values:
+    esta[int(v)] = True
+  
+  if not (all(esta)):
+    context.write(key, 1)
+
+job = Job(inputDir1,outputDir,fmap,fred)
+
+job.setParams({"n": 5}) # Cantidad de datasets a probar
+
+job.addInputPath(inputDir2, fmap2)
+job.addInputPath(inputDir3, fmap3)
+job.addInputPath(inputDir4, fmap4)
+job.addInputPath(inputDir5, fmap5)
+
+success = job.waitForCompletion()
+
+f = os.stat(tempDir + "output.txt")
+
+if (f.st_size > 0):
+  print("NO son iguales")
+else:
+  print("Los datasets son iguales")
