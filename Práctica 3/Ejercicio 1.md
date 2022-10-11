@@ -1,62 +1,47 @@
-# 1. ¿Qué imprime cada uno de los siguientes scripts (sin ejecutarlo)?
-## a. 
+# 1) El siguiente job en MapReduce permite contabilizar cuantas palabras comienzan con cada una de las letras del abecedario.
 ```python
-res = rdd.map(lambda t: t[0] + t[1] * 2)
-print(res.first())
+def map(key, values, context):
+    words = values.split()
+    for w in words:
+        context.write(w[0], 1)
+
+def reduce(key, values, context):
+    c=0
+    for v in values:
+        c=c+1
+    context.write(key, c)
 ```
-La función *map* va a transformar las tuplas a una nueva con la suma del primer valor con el segundo multiplicado por 2.
-
-La función *first* devuelve la primera tupla, pero no puede garantizar que devuelva la primera en orden físico (va a devolver la primera en terminar de ejecutarse).
-
-## b.
+### a. Solucione el problema del “case sensitive” usando comparadores.
 ```python
-res = rdd.filter(lambda t: t[0] >= t[1])
-print(res.take(3))
+def cmpShuffle(key, anotherKey):
+  if key.upper() == anotherKey:
+    return 0
+  else:
+    return -1
+
+#...
+
+job.setShuffleCmp(cmpShuffle)
 ```
-La función *filter* va a filtrar sólo aquellas tuplas cuyo primer elemento sea mayor o igual al segundo
+## b. ¿Cuántos reducers se ejecutan en este problema? Sabiendo que se cuenta con el doble de nodos para la tarea de reduce ¿Cómo podría usar los comparadores para aprovechar todos los nodos?
 
-La función *take(3)* devuelve 3 tuplas aleatorias de aquellas que hayan pasado el filtro.
+Se ejecutan 2 por cada letra del abecedario, suponiendo que todas tienen al menos una palabra tanto en mayúscula como en minúscula (en total serían 56).
 
-## c.
+Una manera de aprovechar el doble de nodos sería crear una variable random entre 0 y 1, que haga que cada letra pueda ir a uno de 2 nodos que tenga asignados.
+
 ```python
-res = rdd.map(lambda t: (t[0], t[1], t[0] / t[1]))
+def map(key, values, context):
+    words = values.split()
+    for w in words:
+        context.write((Math.random(0,1),w[0]), 1)
 
-res = res.filter(lambda t: t[2] < 0.5)
-
-res = res.reduce(lambda t1, t2:
-    t1 if t1[2] < t2[2] else t2))
-print(res)
+def cmpShuffle(key, anotherKey):
+  if key[0] == anotherKey[0]
+    return 0
+  elif key[0] < anotherKey[0]:
+    return -1
+  else:
+    return 1
 ```
-La función *map* va a transformar las tuplas a una nueva 3-tupla con los siguientes elementos:
-<ol>
-<li> Primer elemento
-<li> Segundo elemento
-<li> Resultado de la división del primer elemento por el segundo
-</ol>
-
-La función *filter* va a filtrar sólo aquellas tuplas en las que el resultado de la división anterior sea inferior a 0.5.
-
-La función *reduce* va a retornar la tupla con el resultado de la división más bajo.
-
-## d.
-```python
-r1 = rdd.map(lambda t: t[0])
-r2 = rdd.map(lambda t: t[1])
-
-r1 = r1.distinct()
-r2 = r2.distinct()
-res = r2.union(r1)
-
-print(res.collect())
-```
-La función *map* en `r1` va a transformar la tupla al valor de su primer elemento.
-
-La función *map* en `r2` va a transformar la tupla al valor de su segundo elemento.
-
-La función *distinct* va a eliminar las tuplas duplicadas de `r1` y `r2`.
-
-La función *r2.union(r1)* va a unir todas las tuplas de `r2` con las de `r1`; la unión no elimina repetidos, por lo que si hay elementos que estén en ambos RDD entonces van a aparecer dos veces.
-
-La función *collect* vuelca toda la información del resultado al nodo maestro o *"driver"*.
-
+Aunque al hacer esto tendríamos que hacer un segundo Job o un programa externo para unir los resultados de los dos reducers ejecutándose en nodos distintos.
 
