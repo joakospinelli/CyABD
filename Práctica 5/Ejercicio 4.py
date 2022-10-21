@@ -5,6 +5,8 @@
 # Prestamos: <ID_Caja, cuotas, monto>
 
 clientes = sc.textFile(root_path + "Banco/input/Clientes")
+cajas = sc.textFile(root_path + "Banco/input/CajasDeAhorro")
+prestamos = sc.textFile(root_path + "Banco/input/Prestamos")
 
 europeos = [ "ITA", "ESP" ]
 americanos = [ "BRA", "ARG", "VEN", "COL", "BOL", "ECU", "URU", "PAR", "CHI", "PER" ]
@@ -69,4 +71,32 @@ print((edadesClientes[0] / edadesClientes[1]) > (edadesClientes[2] / edadesClien
 
 # c. Los americanos deben más plata que los europeos (un cliente debe plata si la suma de montos de todas sus cajas de ahorro es negativa)
 
+europeos = [ "ITA", "ESP" ]
+americanos = [ "BRA", "ARG", "VEN", "COL", "BOL", "ECU", "URU", "PAR", "CHI", "PER" ]
+
+# c. Los americanos deben más plata que los europeos (un cliente debe plata si la suma de montos de todas sus cajas de ahorro es negativa)
+
+clientes = clientes.map(lambda t: t.split("\t"))
+clientes = clientes.map(lambda t: (t[0], ("AMERICA" if t[5] in americanos else "EUROPA") ) )
+
+cajas = cajas.map(lambda t: t.split("\t"))
+cajas = cajas.map(lambda t: (t[1], (t[2] )) )
+
+clientes = clientes.join(cajas)
+
+clientes = clientes.reduceByKey(lambda t1,t2: (t1[0], float(t1[1]) + float(t2[1]) ) )
+
+clientes = clientes.map(lambda t: (t[1][0], t[1][1]) )
+clientes = clientes.reduceByKey(lambda t1, t2: (float(t1) + float(t2) ))
+
+resultados = clientes.collect()
+
+print(resultados)
+# No sé si se puede garantizar que en [0] SIEMPRE va a estar Europa y en [1] SIEMPRE va a estar America
+print((resultados[0][1] < 0) and (resultados[0][1] < resultados[1][1]))
+
 # d. Los clientes americanos suelen sacar, en promedio, préstamos con mayor cantidad de cuotas que los europeos
+
+"""
+  ESTE NO LO VOY A HACER zzzz
+"""
