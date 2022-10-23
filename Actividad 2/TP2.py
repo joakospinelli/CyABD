@@ -39,6 +39,8 @@ lugaresBD = lugaresBD.filter(lambda t: t[0] != '' and t[0] != 'Otro')
 
 lugaresBD = lugaresBD.reduceByKey(lambda t1, t2: t1 + t2)
 
+lugaresBD = lugaresBD.map(lambda t: (t[1], t[0])) # Invierto clave-valor para que el sort interno de 'top' funcione con la cantidad
+
 lugaresBD = lugaresBD.top(3)
 
 print(lugaresBD)
