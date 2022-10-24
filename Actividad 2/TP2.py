@@ -44,3 +44,40 @@ lugaresBD = lugaresBD.map(lambda t: (t[1], t[0])) # Invierto clave-valor para qu
 lugaresBD = lugaresBD.top(3)
 
 print(lugaresBD)
+
+# 3) Implemente un script de Spark que permita conocer la cantidad de vehículos en movimiento por franja horaria.
+# La duración de la franja horaria es un parámetro de la consulta.
+
+# 4) Implemente un script de Spark que permita conocer cuál es el top 10 de las esquinas (avenida, calle) más transitadas por vehículos diferentes.
+# En esta consulta cada vehículo cuenta como paso de una esquina una única vez,
+# independientemente de que el mismo vehículo haya pasado por la misma esquina varias veces en diferentes viajes.
+
+# --- Mismo problema que el ej.2
+
+esquinas = viajes.map(lambda t: (t[1] + ',' + t[2], t[0]) )
+esquinas = esquinas.distinct()
+
+esquinas = esquinas.map(lambda t: (t[0], 1) )
+
+esquinas = esquinas.reduceByKey(lambda t1,t2: t1 + t2)
+
+esquinas = esquinas.map(lambda t: (t[1], t[0]) )
+
+esquinas = esquinas.top(10)
+print(esquinas)
+
+# 5) Implemente un script de Spark que permita conocer la avenida y la calle más recorrida.
+# La avenida (y también la calle) más recorrida es aquella por la que transitaron más vehículos en cualquiera de sus tramos.
+# En esta consulta, cada vehículo puede sumar más de una vez si pasó por la misma cuadra varias veces.
+
+avenidas = viajes.map(lambda t: (t[1], 1) )
+calles = viajes.map(lambda t: (t[2], 1) )
+
+avenidas = avenidas.reduceByKey(lambda t1,t2: t1 + t2)
+avenidas = avenidas.reduce(lambda t1,t2: t1 if t1[1] > t2[1] else t2)
+
+calles = calles.reduceByKey(lambda t1,t2: t1 + t2)
+calles = calles.reduce(lambda t1,t2: t1 if t1[1] > t2[1] else t2)
+
+print(avenidas)
+print(calles)
