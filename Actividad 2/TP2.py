@@ -14,6 +14,7 @@ viajesVehiculo = viajes.map(lambda t: (t[0], (t[1], t[2], t[3], t[4]) ) )
 
 viajesVehiculo = viajesVehiculo.filter(lambda t: t[1][3] != '')
 
+print('Viajes por vehículo:')
 print(viajesVehiculo.countByKey())
 
 # 2) Implemente un script de Spark que permita conocer cual es el top 3 de los "tipos" de destinos más visitados.
@@ -22,15 +23,13 @@ print(viajesVehiculo.countByKey())
 
 # --- Esta solución no es válida si los tipos de destino fuesen Big Data
 
-viajes = sc.textFile(root_path + '/Viajes/input/')
-viajes = viajes.map(lambda t: t.split("\t"))
-
 lugares = viajes.map(lambda t: (t[4], 1) ) 
 lugares = lugares.filter(lambda t: t[0] != '' and t[0] != 'Otro')
 
 lugares = lugares.countByKey()
 
-sorted(lugares.items(), key=lambda x: x[1], reverse=True)[0:3]
+print('Destinos más visitados: ')
+print(sorted(lugares.items(), key=lambda x: x[1], reverse=True)[0:3])
 
 # --- Otra solución
 
@@ -43,14 +42,11 @@ lugaresBD = lugaresBD.map(lambda t: (t[1], t[0])) # Invierto clave-valor para qu
 
 lugaresBD = lugaresBD.top(3)
 
+print('Destinos más visitados:')
 print(lugaresBD)
 
 # 3) Implemente un script de Spark que permita conocer la cantidad de vehículos en movimiento por franja horaria.
 # La duración de la franja horaria es un parámetro de la consulta.
-
-#  (ID_vehículo, Avenida, Calle, Timestamp, Destino)
-viajes = sc.textFile(root_path + '/Viajes/input/')
-viajes = viajes.map(lambda t: t.split("\t"))
 
 # Hay que preguntar cuál es el valor máximo del timestamp para hacer el cálculo (en el dataset era 23997 pero capaz podría llegar a más)
 while (True):
@@ -65,12 +61,13 @@ duracion = sc.broadcast(duracion)
 def getFranjaHoraria(timestamp):
   return int(int(timestamp) / duracion.value)
 
-viajes = viajes.map(lambda t: (getFranjaHoraria(t[3]), 1) )
+franjas = viajes.map(lambda t: (getFranjaHoraria(t[3]), 1) )
 
-viajes = viajes.reduceByKey(lambda t1, t2: t1 + t2)
+franjas = franjas.reduceByKey(lambda t1, t2: t1 + t2)
 
-conteoViajes = viajes.sortByKey().collect()
+conteoViajes = franjas.sortByKey().collect()
 
+print('cantidad de vehículos por franja horaria')
 for i in conteoViajes:
   print((i[0] * duracion.value),'-',((duracion.value * (i[0] + 1) - 1)),': ', i[1])
 
@@ -90,6 +87,8 @@ esquinas = esquinas.reduceByKey(lambda t1,t2: t1 + t2)
 esquinas = esquinas.map(lambda t: (t[1], t[0]) )
 
 esquinas = esquinas.top(10)
+
+print('Esquinas más transitadas:')
 print(esquinas)
 
 # 5) Implemente un script de Spark que permita conocer la avenida y la calle más recorrida.
@@ -105,5 +104,5 @@ avenidas = avenidas.reduce(lambda t1,t2: t1 if t1[1] > t2[1] else t2)
 calles = calles.reduceByKey(lambda t1,t2: t1 + t2)
 calles = calles.reduce(lambda t1,t2: t1 if t1[1] > t2[1] else t2)
 
-print(avenidas)
-print(calles)
+print('Avenida más recorrida: ', avenidas)
+print('Calle más recorrida: ', calles)
