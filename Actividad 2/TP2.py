@@ -48,6 +48,32 @@ print(lugaresBD)
 # 3) Implemente un script de Spark que permita conocer la cantidad de vehículos en movimiento por franja horaria.
 # La duración de la franja horaria es un parámetro de la consulta.
 
+#  (ID_vehículo, Avenida, Calle, Timestamp, Destino)
+viajes = sc.textFile(root_path + '/Viajes/input/')
+viajes = viajes.map(lambda t: t.split("\t"))
+
+# Hay que preguntar cuál es el valor máximo del timestamp para hacer el cálculo (en el dataset era 23997 pero capaz podría llegar a más)
+while (True):
+  duracion = int(input('ingrese la duración de la franja horaria: '))
+  if (duracion > 24000):
+    print('ingrese un número menor a 24000')
+  else: break
+
+duracion = sc.broadcast(duracion)
+
+# Divide el tiempo total por la duración de la franja horaria y retorna la franja en la que estaría la tupla
+def getFranjaHoraria(timestamp):
+  return int(int(timestamp) / duracion.value)
+
+viajes = viajes.map(lambda t: (getFranjaHoraria(t[3]), 1) )
+
+viajes = viajes.reduceByKey(lambda t1, t2: t1 + t2)
+
+conteoViajes = viajes.sortByKey().collect()
+
+for i in conteoViajes:
+  print((i[0] * duracion.value),'-',((duracion.value * (i[0] + 1) - 1)),': ', i[1])
+
 # 4) Implemente un script de Spark que permita conocer cuál es el top 10 de las esquinas (avenida, calle) más transitadas por vehículos diferentes.
 # En esta consulta cada vehículo cuenta como paso de una esquina una única vez,
 # independientemente de que el mismo vehículo haya pasado por la misma esquina varias veces en diferentes viajes.
