@@ -21,18 +21,6 @@ print(viajesVehiculo.countByKey())
 # Los "tipos" de destino válidos son "Hospital", "Escuela", "Plaza", "Ferretería", "Farmacia", "Supermercado", "Museo".
 # NO interesa contar a los destinos "Otro".
 
-# --- Esta solución no es válida si los tipos de destino fuesen Big Data
-
-lugares = viajes.map(lambda t: (t[4], 1) ) 
-lugares = lugares.filter(lambda t: t[0] != '' and t[0] != 'Otro')
-
-lugares = lugares.countByKey()
-
-print('Destinos más visitados: ')
-print(sorted(lugares.items(), key=lambda x: x[1], reverse=True)[0:3])
-
-# --- Otra solución
-
 lugaresBD = viajes.map(lambda t: (t[4], 1) ) 
 lugaresBD = lugaresBD.filter(lambda t: t[0] != '' and t[0] != 'Otro')
 
@@ -74,8 +62,6 @@ for i in conteoViajes:
 # 4) Implemente un script de Spark que permita conocer cuál es el top 10 de las esquinas (avenida, calle) más transitadas por vehículos diferentes.
 # En esta consulta cada vehículo cuenta como paso de una esquina una única vez,
 # independientemente de que el mismo vehículo haya pasado por la misma esquina varias veces en diferentes viajes.
-
-# --- Mismo problema que el ej.2
 
 esquinas = viajes.map(lambda t: (t[1] + ',' + t[2], t[0]) )
 esquinas = esquinas.distinct()
