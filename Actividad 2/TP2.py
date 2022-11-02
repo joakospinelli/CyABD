@@ -10,12 +10,14 @@ viajes = viajes.map(lambda t: t.split("\t"))
 # 1) Implemente un script de Spark que permita conocer cuántos viajes realizó cada vehículo.
 # Recordar que un viaje es una serie de coordenadas que finalizan en un destino determinado.
 
-viajesVehiculo = viajes.map(lambda t: (t[0], (t[1], t[2], t[3], t[4]) ) )
+viajesVehiculo = viajes.map(lambda t: (t[0], t[4]) )
 
-viajesVehiculo = viajesVehiculo.filter(lambda t: t[1][3] != '')
+viajesVehiculo = viajesVehiculo.filter(lambda t: t[1] != '')
+
+viajesVehiculo = viajesVehiculo.countByKey()
 
 print('Viajes por vehículo:')
-print(viajesVehiculo.countByKey())
+print(viajesVehiculo.items())
 
 # 2) Implemente un script de Spark que permita conocer cual es el top 3 de los "tipos" de destinos más visitados.
 # Los "tipos" de destino válidos son "Hospital", "Escuela", "Plaza", "Ferretería", "Farmacia", "Supermercado", "Museo".
@@ -36,12 +38,12 @@ print(lugaresBD)
 # 3) Implemente un script de Spark que permita conocer la cantidad de vehículos en movimiento por franja horaria.
 # La duración de la franja horaria es un parámetro de la consulta.
 
+# 3) Implemente un script de Spark que permita conocer la cantidad de vehículos en movimiento por franja horaria.
+# La duración de la franja horaria es un parámetro de la consulta.
+
 # Hay que preguntar cuál es el valor máximo del timestamp para hacer el cálculo (en el dataset era 23997 pero capaz podría llegar a más)
-while (True):
-  duracion = int(input('ingrese la duración de la franja horaria: '))
-  if (duracion > 24000):
-    print('ingrese un número menor a 24000')
-  else: break
+
+duracion = int(input('ingrese la duración de la franja horaria: '))
 
 duracion = sc.broadcast(duracion)
 
