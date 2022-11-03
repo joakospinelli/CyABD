@@ -41,8 +41,6 @@ print(lugaresBD)
 # 3) Implemente un script de Spark que permita conocer la cantidad de vehículos en movimiento por franja horaria.
 # La duración de la franja horaria es un parámetro de la consulta.
 
-# Hay que preguntar cuál es el valor máximo del timestamp para hacer el cálculo (en el dataset era 23997 pero capaz podría llegar a más)
-
 duracion = int(input('ingrese la duración de la franja horaria: '))
 
 duracion = sc.broadcast(duracion)
