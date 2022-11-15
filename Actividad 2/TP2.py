@@ -38,10 +38,7 @@ print(lugaresBD)
 # 3) Implemente un script de Spark que permita conocer la cantidad de vehículos en movimiento por franja horaria.
 # La duración de la franja horaria es un parámetro de la consulta.
 
-# 3) Implemente un script de Spark que permita conocer la cantidad de vehículos en movimiento por franja horaria.
-# La duración de la franja horaria es un parámetro de la consulta.
-
-duracion = int(input('ingrese la duración de la franja horaria: '))
+duracion = int(input('Ingrese la duración de la franja horaria: '))
 
 duracion = sc.broadcast(duracion)
 
@@ -49,13 +46,16 @@ duracion = sc.broadcast(duracion)
 def getFranjaHoraria(timestamp):
   return int(int(timestamp) / duracion.value)
 
-franjas = viajes.map(lambda t: (getFranjaHoraria(t[3]), 1) )
+franjas = viajes.map(lambda t: (getFranjaHoraria(t[3]), t[0]) )
 
+franjas = franjas.distinct()
+
+franjas = franjas.map(lambda t: (t[0], 1) )
 franjas = franjas.reduceByKey(lambda t1, t2: t1 + t2)
 
 conteoViajes = franjas.sortByKey().collect()
 
-print('cantidad de vehículos por franja horaria')
+print('Cantidad de vehículos por franja horaria:')
 for i in conteoViajes:
   print((i[0] * duracion.value),'-',((duracion.value * (i[0] + 1) - 1)),': ', i[1])
 
