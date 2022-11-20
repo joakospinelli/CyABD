@@ -81,11 +81,30 @@ print(esquinas)
 # La avenida (y también la calle) más recorrida es aquella por la que transitaron más vehículos en cualquiera de sus tramos.
 # En esta consulta, cada vehículo puede sumar más de una vez si pasó por la misma cuadra varias veces.
 
-avenidas = viajes.map(lambda t: (t[1], 1) )
-calles = viajes.map(lambda t: (t[2], 1) )
+# usamos el umbral en el timestamp para verificar que los tramos sean consecutivos
+umbral = sc.broadcast(100)
+
+# --- Avenidas
+avenidas = viajes.map(lambda t: ( (t[0], int(t[1])),(int(t[2]), int(t[3])) ) )
+
+avenidas = avenidas.join(avenidas)
+
+# hacemos in [-1, 1] suponiendo que los tramos pueden ser tanto para adelante como para atrás
+avenidas = avenidas.filter(lambda t: (t[1][0][0] - t[1][1][0] in [-1, 1]) and (abs(t[1][1][1] - t[1][0][1]) < umbral.value) )
+
+avenidas = avenidas.map(lambda t: (t[0][1], 1) )
 
 avenidas = avenidas.reduceByKey(lambda t1,t2: t1 + t2)
 avenidas = avenidas.reduce(lambda t1,t2: t1 if t1[1] > t2[1] else t2)
+
+# --- Calles
+calles = viajes.map(lambda t: ( (t[0], int(t[2])),(int(t[1]), int(t[3])) ) )
+
+calles = calles.join(calles)
+
+calles = calles.filter(lambda t: (t[1][0][0] - t[1][1][0] in [-1, 1]) and (abs(t[1][1][1] - t[1][0][1]) < umbral.value) )
+
+calles = calles.map(lambda t: (t[0][1], 1) )
 
 calles = calles.reduceByKey(lambda t1,t2: t1 + t2)
 calles = calles.reduce(lambda t1,t2: t1 if t1[1] > t2[1] else t2)
